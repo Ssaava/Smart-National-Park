@@ -76,3 +76,5 @@ Instructions
 ## Confirm the groups from [here](https://docs.google.com/spreadsheets/d/12tDuvmDEFpV9yaT2xKbajw9heQQAHNAD/edit?usp=sharing&ouid=112023987947581394086&rtpof=true&sd=true)
 
 if you wish to be moved to another group, which has less than 5 members, let me know
+
+Want to contribute? Read the contribution [Guidelines](CONTRIBUTING.md)
