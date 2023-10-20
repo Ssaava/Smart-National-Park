@@ -73,8 +73,8 @@ Instructions
 - I will listen to the presentations and
   award marks there and then.
 
-## Confirm the groups (from)[https://docs.google.com/spreadsheets/d/12tDuvmDEFpV9yaT2xKbajw9heQQAHNAD/edit?us
+## Confirm the groups [from](https://docs.google.com/spreadsheets/d/12tDuvmDEFpV9yaT2xKbajw9heQQAHNAD/edit?us
 
-p=sharing&ouid=112023987947581394086&rtpof=true&sd=true]
+p=sharing&ouid=112023987947581394086&rtpof=true&sd=true)
 
 if you wish to be moved to another group, which has less than 5 members, let me know
