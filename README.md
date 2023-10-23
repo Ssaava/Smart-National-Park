@@ -78,3 +78,4 @@ Instructions
 if you wish to be moved to another group, which has less than 5 members, let me know
 
 Want to contribute? Read the contribution [Guidelines](CONTRIBUTING.md)
+.
