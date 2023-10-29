@@ -13,10 +13,19 @@
 #define CAPACITY 10
 
 
-unsigned int inputNum = 0; //record the user inputted number
+int inputNum = 0; //record the user inputted number
 int mode = 0; //represent the current mode, 1 for inputting the 10 yrs and below, 2 for 10yrs and above and 3 for number plate
+int fridgeMode = 0;
 int currentCapacity = 0;
 int attendantPin = 2222;
+int bottleCost = 1500;
+int fridgeNum = 0;
+int totalBottles = 10;
+int collectedMoney = 0;
+int expectedMoney = 0;
+
+void monitorGateKeyPad();
+void monitorFridgeKeyPad();
 
 struct TouristCar 
 {
@@ -25,39 +34,73 @@ struct TouristCar
 	int plateNo;
 };
 
-void latch(){
-	PORTG &= ~(1 << PG5);
-	_delay_ms(10);
-	PORTG |= (1 << PG5);
-	_delay_ms(10);
+struct TouristCar touristCars[CAPACITY];
+
+void latch(int device){
+	if (device == 0)
+	{
+		//latch gate lcd
+		PORTG &= ~(1 << PG5);
+		_delay_ms(10);
+		PORTG |= (1 << PG5);
+		_delay_ms(10);
+	}
+	else{
+		//latch fridge
+		PORTC &= ~(1 << PC1);
+		_delay_ms(10);
+		PORTC |= (1 << PC1);
+		_delay_ms(10);
+	}
+	
 }
 
 
 
-void displayMessage(char message[], int row){
-	char rows[] = {0x80, 0xC0, 0x90, 0xD0};
-	
-	PORTG &= ~(1 << PG3); //command mode
-	latch();
-	
-	
-	PORTH = 0b00000001; //clear screen
-	latch();
-	
-	PORTG = rows[row];
-	latch();
-	
-	
-	PORTG |= (1 << PG3); //data mode
-	PORTG &= ~(1 << PG4); //write mode
-	
-	latch();
-	int i;
-	
-	for (i = 0; message[i] != '\0'; i++)
+void displayMessage(char message[], int device){
+	if (device == 0)
 	{
-		PORTH = message[i];
-		latch();
+		PORTG &= ~(1 << PG3); //command mode
+		latch(0);
+		
+		
+		PORTH = 0b00000001; //clear screen
+		latch(0);
+		
+		
+		PORTG |= (1 << PG3); //data mode
+		PORTG &= ~(1 << PG4); //write mode
+		
+		latch(0);
+		int i;
+		
+		for (i = 0; message[i] != '\0'; i++)
+		{
+			PORTH = message[i];
+			latch(0);
+		}
+	} 
+	else
+	{
+		PORTC &= ~(1 << PC3); //command mode
+		latch(1);
+		
+		
+		PORTB = 0b00000001; //clear screen
+		latch(1);
+		
+		
+		PORTC |= (1 << PC3); //data mode
+		PORTC &= ~(1 << PC2); //write mode
+		
+		latch(1);
+		int i;
+		
+		for (i = 0; message[i] != '\0'; i++)
+		{
+			PORTB = message[i];
+			latch(1);
+		}
 	}
 }
 
@@ -75,29 +118,52 @@ void openAndCloseGate(){
 	PORTF = 0x00;
 }
 
-void displayNum(int num){
+
+void displayNum(int num, int device){
 	int numLen = (int)((ceil(log10(num)) + 1) * sizeof(char));
 
 	char numStr[numLen];
 	sprintf(numStr, "%d", num); // Convert only the updated inputNum to a string
 	
-	char display[100];
 
-	displayMessage(numStr, 0); // Display the updated inputNum
+	displayMessage(numStr, device); // Display the updated inputNum
 	_delay_ms(1000);
 }
 
-void recordAndDisplay(int num) {
-	inputNum = (inputNum * 10) + num; // Update inputNum
+void recordAndDisplay(int num, int device) {
+	if (device == 0)
+	{
+		inputNum = (inputNum * 10) + num; // Update inputNum
+		displayNum(inputNum, 0);
+	}
+	else{
+		fridgeNum = (fridgeNum * 10) + num; // Update inputNum
+		displayNum(fridgeNum, 1);
+	}
 	
-	displayNum(inputNum);
+}
+
+void displayDefaultFridgeMessage(){
+		//display fridge message
+		int numLen = (int)((ceil(log10(bottleCost)) + 1) * sizeof(char));
+
+		char bottleCostStr[numLen];
+		sprintf(bottleCostStr, "%d", bottleCost);
+
+		
+		char* msg = "ENTER IN NO BOTTLE @";
+		char buf[1000];
+		
+		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr);
+		
+		
+		displayMessage(buf, 1);
 }
 
 
 int main(void)
 {
 	//initiate the tourist cars
-	struct TouristCar touristCars[CAPACITY];
 	
     /* Replace with your application code */
 	EIMSK |= (1 << INT0); //register the int 0 pin
@@ -106,41 +172,225 @@ int main(void)
 	DDRH = 0xff;
 	DDRG = 0xff;
 	DDRF = 0xff;
+	DDRC = 0xff;
+	DDRB = 0xff;
 	DDRK = 0b00000111;
+	DDRE = 0b00000111;
 	
 	sei();
 	
 	PORTG &= ~(1 << PG3); //command mode
 	PORTG &= ~(1 << PG4); //write mode
-	latch();
+	latch(0);
 	
 	
 	PORTH = 0x0f; //display
-	latch();
+	latch(0);
+	
+	
+	PORTC &= ~(1 << PC3); //command mode fridge
+	PORTC &= ~(1 << PC2); //write mode fridge
+	latch(1);
 	
 	inputNum = 0;
 	
+	PORTB = 0x0f;
+	latch(1);
+	
+	displayDefaultFridgeMessage();
+
+	
     while (1) {
-		//
+		//PORTC = 0b00100000;
 		
-		PORTK = 0b11111011;
+		monitorGateKeyPad();
+		monitorFridgeKeyPad();
 		
-		if ((PINK & 0b00001000) == 0)
+    }
+}
+
+void monitorFridgeKeyPad(){
+	PORTE = 0b11111011;
+	if ((PINE & 0b00001000) == 0)
 		{ //1
 			_delay_ms(150); // to avoid the bouncing contact point error
-			recordAndDisplay(1);
+			recordAndDisplay(1, 1);
+		}
+		
+		if ((PINE & 0b00010000) == 0)
+		{ //4
+			_delay_ms(150); // to avoid the bouncing contact point error
+			recordAndDisplay(4, 1);
+		}
+		
+		if ((PINE & 0b00100000) == 0)
+		{ //7
+			_delay_ms(150); // to avoid the bouncing contact point error
+			recordAndDisplay(7, 1);
+		}
+		
+		if ((PINE & 0b01000000) == 0)
+		{ //*
+			_delay_ms(150); // to avoid the bouncing contact point error
+			if (fridgeMode == 0)
+			{
+				if (totalBottles <= fridgeNum)
+				{
+					int numLen = (int)((ceil(log10(totalBottles)) + 1) * sizeof(char));
+
+					char bottlesStr[numLen];
+					sprintf(bottlesStr, "%d", totalBottles);
+
+					
+					char* msg = "ENTER BOTTLES less than ";
+					char buf[1000];
+					
+					snprintf(buf, sizeof(buf), "%s%s", msg, bottlesStr);
+					displayMessage(buf, 1);
+				}
+				else{
+					expectedMoney = fridgeNum * bottleCost;
+					
+					int numLen = (int)((ceil(log10(expectedMoney)) + 1) * sizeof(char));
+
+					char expectedMoneyStr[numLen];
+					sprintf(expectedMoneyStr, "%d", expectedMoney);
+					
+					char* msg = "ADD ";
+					char* ms2 = " IN THE MONEY SLOT";
+					char buf[1000];
+					
+					snprintf(buf, sizeof(buf), "%s%s%s", msg, expectedMoneyStr, ms2);
+					
+					displayMessage(buf, 1);
+					fridgeMode = 1;
+				}
+			}
+			else if (fridgeMode == 1)
+			{
+				if (fridgeNum >= expectedMoney)
+				{
+					collectedMoney += fridgeNum;
+					int bottles = expectedMoney / bottleCost;
+					totalBottles -= bottles;
+					
+					displayMessage("MONEY SLOT OPENING", 1);
+					
+					PORTC |= (1 << PC5);
+					_delay_ms(2000);
+					
+					PORTC &= ~(1 << PC5);
+					displayMessage("ADD THE MONEY", 1);
+					_delay_ms(2000);
+					
+					displayMessage("CLOSING SLOT", 1);
+					PORTC |= (1 << PC4);
+					_delay_ms(2000);
+					
+					PORTC &= ~(1 << PC4); //stop motor
+					
+					displayMessage("OPENING BOTTLE SLOT", 1);
+					PORTC |= (1 << PC6);
+					_delay_ms(2000);
+					
+					PORTC &= ~(1 << PC6);
+					displayMessage("PICK YOUR BOTTLE", 1);
+					_delay_ms(2000);
+					
+					displayMessage("CLOSING BOTTLE SLOT", 1);
+					PORTC |= (1 << PC7);
+					_delay_ms(2000);
+					
+					PORTC &= ~(1 << PC7); //stop motor
+					fridgeMode = 0;
+					
+					displayDefaultFridgeMessage();
+					
+				}
+				else{
+					
+					displayMessage("FAILED !,INSUFFICIENT MONEY", 1);
+				}
+			}
+			
+			
+			fridgeNum = 0; // reset
+		}
+		
+		PORTE = 0b11111101;
+		
+		if ((PINE & 0b00001000) == 0)
+		{ //3
+			_delay_ms(150);  // to avoid the bouncing contact point error
+			recordAndDisplay(2, 1);
+		}
+		
+		if ((PINE & 0b00010000) == 0)
+		{ //5
+			_delay_ms(150);  // to avoid the bouncing contact point error
+			recordAndDisplay(5, 1);
+		}
+		
+		if ((PINE & 0b00100000) == 0)
+		{ //8
+			_delay_ms(150);  // to avoid the bouncing contact point error
+			recordAndDisplay(8, 1);
+		}
+		
+		if ((PINE & 0b01000000) == 0)
+		{ //0
+			_delay_ms(150);  // to avoid the bouncing contact point error
+			recordAndDisplay(0, 1);
+			
+		}
+		
+		PORTE = 0b11111110;
+		
+		if ((PINE & 0b00001000) == 0)
+		{ //3
+			_delay_ms(150);  // to avoid the bouncing contact point error
+			recordAndDisplay(3, 1);
+		}
+		
+		if ((PINE & 0b00010000) == 0)
+		{ //5
+			_delay_ms(150); // to avoid the bouncing contact point error
+			recordAndDisplay(6, 1);
+		}
+		
+		if ((PINE & 0b00100000) == 0)
+		{ //8
+			_delay_ms(150);
+			recordAndDisplay(9, 1);
+		}
+		
+		if ((PINE & 0b01000000) == 0)
+		{ //0
+			
+			fridgeNum = 0;
+			fridgeMode = 0;
+			displayDefaultFridgeMessage();
+		}
+}
+
+void monitorGateKeyPad(){
+	PORTK = 0b11111011;
+	if ((PINK & 0b00001000) == 0)
+		{ //1
+			_delay_ms(150); // to avoid the bouncing contact point error
+			recordAndDisplay(1, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //4
 			_delay_ms(150); // to avoid the bouncing contact point error
-			recordAndDisplay(4);
+			recordAndDisplay(4, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //7
 			_delay_ms(150); // to avoid the bouncing contact point error
-			recordAndDisplay(7);
+			recordAndDisplay(7, 0);
 		}
 		
 		if ((PINK & 0b01000000) == 0)
@@ -195,7 +445,7 @@ int main(void)
 				if (inputNum == 1)
 				{
 					//all cars
-					displayNum(currentCapacity);
+					displayNum(currentCapacity, 0);
 					displayMessage("1->ALL CARS,2->TOURISTS", 0);
 					
 				}
@@ -208,11 +458,10 @@ int main(void)
 						sum += (touristCars[i].touristAbove10 + touristCars[1].touristBelow10);
 					}
 					
-					displayNum(sum);
+					displayNum(sum, 0);
 					displayMessage("1->ALL CARS,2->TOURISTS", 0);
 					
-				}
-			}
+				}			}
 			inputNum = 0; // reset
 		}
 		
@@ -221,25 +470,25 @@ int main(void)
 		if ((PINK & 0b00001000) == 0)
 		{ //3
 			_delay_ms(150);  // to avoid the bouncing contact point error
-			recordAndDisplay(2);
+			recordAndDisplay(2, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //5
 			_delay_ms(150);  // to avoid the bouncing contact point error
-			recordAndDisplay(5);
+			recordAndDisplay(5, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //8
 			_delay_ms(150);  // to avoid the bouncing contact point error
-			recordAndDisplay(8);
+			recordAndDisplay(8, 0);
 		}
 		
 		if ((PINK & 0b01000000) == 0)
 		{ //0
 			_delay_ms(150);  // to avoid the bouncing contact point error
-			recordAndDisplay(0);
+			recordAndDisplay(0, 0);
 			
 		}
 		
@@ -248,19 +497,19 @@ int main(void)
 		if ((PINK & 0b00001000) == 0)
 		{ //3
 			_delay_ms(150);  // to avoid the bouncing contact point error
-			recordAndDisplay(3);
+			recordAndDisplay(3, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //5
 			_delay_ms(150); // to avoid the bouncing contact point error
-			recordAndDisplay(6);
+			recordAndDisplay(6, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //8
 			_delay_ms(150);
-			recordAndDisplay(9);
+			recordAndDisplay(9, 0);
 		}
 		
 		if ((PINK & 0b01000000) == 0)
@@ -273,10 +522,7 @@ int main(void)
 			mode = 4;
 			
 		}
-		
-    }
 }
-
 
 ISR(INT0_vect){
 	PORTJ = 0xff;
@@ -286,7 +532,7 @@ ISR(INT0_vect){
 	
 	PORTJ = 0x00;
 	
-	displayMessage("register mode", 2);
+	displayMessage("register mode", 0);
 	
 	
 	mode = 1;
