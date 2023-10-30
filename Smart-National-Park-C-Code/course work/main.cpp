@@ -532,6 +532,9 @@ ISR(INT0_vect){
 	
 	PORTJ = 0x00;
 	
+<<<<<<< HEAD
+	displayMessage("register here");
+=======
 	displayMessage("register mode", 0);
 	
 	
@@ -542,4 +545,5 @@ ISR(INT0_vect){
 	
 	displayMessage("TOURISTS <10yrs", 0);
 	inputNum = 0;
+>>>>>>> main
 }

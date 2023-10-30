@@ -1,1 +1,3 @@
-/Smart-National-Park-C-Code/Smart-National-Park-C-Code/Debug/**
+# donot remove these lines please 
+*.dist
+*.vscode

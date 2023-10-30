@@ -635,7 +635,11 @@ END GROUP
  *(.fini0)
                 0x000018aa                _etext = .
 
+<<<<<<< HEAD
+.data           0x00800200       0x1a load address 0x00000234
+=======
 .data           0x00800200      0x196 load address 0x000018aa
+>>>>>>> main
                 0x00800200                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -652,6 +656,16 @@ END GROUP
  *(.rodata)
  *(.rodata*)
  .rodata.str1.1
+<<<<<<< HEAD
+                0x00800200       0x1a main.o
+ *(.gnu.linkonce.r*)
+                0x0080021a                . = ALIGN (0x2)
+                0x0080021a                _edata = .
+                0x0080021a                PROVIDE (__data_end, .)
+
+.bss            0x0080021a        0x0
+                [!provide]                PROVIDE (__bss_start, .)
+=======
                 0x00800206      0x18f main.o
                                 0x194 (size before relaxing)
  *(.gnu.linkonce.r*)
@@ -662,6 +676,7 @@ END GROUP
 
 .bss            0x00800396       0x4a
                 0x00800396                PROVIDE (__bss_start, .)
+>>>>>>> main
  *(.bss)
  *(.bss*)
  .bss.touristCars
@@ -687,6 +702,17 @@ END GROUP
  .bss.inputNum  0x008003de        0x2 main.o
                 0x008003de                inputNum
  *(COMMON)
+<<<<<<< HEAD
+                [!provide]                PROVIDE (__bss_end, .)
+                0x00000234                __data_load_start = LOADADDR (.data)
+                0x0000024e                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x0080021a        0x0
+                [!provide]                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                [!provide]                PROVIDE (__noinit_end, .)
+                0x0080021a                _end = .
+=======
                 0x008003e0                PROVIDE (__bss_end, .)
                 0x000018aa                __data_load_start = LOADADDR (.data)
                 0x00001a40                __data_load_end = (__data_load_start + SIZEOF (.data))
@@ -696,6 +722,7 @@ END GROUP
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
                 0x008003e0                _end = .
+>>>>>>> main
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -792,11 +819,19 @@ END GROUP
  *(.debug_frame)
  .debug_frame   0x00000000      0x1bc main.o
 
+<<<<<<< HEAD
+.debug_str      0x00000000      0x620
+ *(.debug_str)
+ .debug_str     0x00000000      0x3e6 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
+ .debug_str     0x000003e6      0x23a main.o
+                                0x273 (size before relaxing)
+=======
 .debug_str      0x00000000      0x81a
  *(.debug_str)
  .debug_str     0x00000000      0x3e6 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_str     0x000003e6      0x434 main.o
                                 0x46d (size before relaxing)
+>>>>>>> main
 
 .debug_loc      0x00000000     0x1161
  *(.debug_loc)
