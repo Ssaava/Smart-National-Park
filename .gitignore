@@ -1,4 +1,3 @@
 # donot remove these lines please 
 *.dist
-*Project Backups
-/Smart-National-Park-C-Code/course work/Debug/**
+*.vscode
