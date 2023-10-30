@@ -70,5 +70,5 @@ ISR(INT0_vect){
 	
 	PORTJ = 0x00;
 	
-	displayMessage("register");
+	displayMessage("register here");
 }

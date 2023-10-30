@@ -1,4 +1,4 @@
 # donot remove these lines please 
-/Smart-National-Park-C-Code/Smart-National-Park-C-Code/Debug/**
-/Smart-National-Park-C-Code/course work/Debug/**
 *.dist
+*Project Backups
+/Smart-National-Park-C-Code/course work/Debug/**

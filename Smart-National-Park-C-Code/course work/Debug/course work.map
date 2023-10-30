@@ -326,7 +326,7 @@ END GROUP
  *(.fini0)
                 0x00000234                _etext = .
 
-.data           0x00800200       0x16 load address 0x00000234
+.data           0x00800200       0x1a load address 0x00000234
                 0x00800200                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -334,27 +334,26 @@ END GROUP
  *(.rodata)
  *(.rodata*)
  .rodata.str1.1
-                0x00800200       0x15 main.o
+                0x00800200       0x1a main.o
  *(.gnu.linkonce.r*)
-                0x00800216                . = ALIGN (0x2)
- *fill*         0x00800215        0x1 
-                0x00800216                _edata = .
-                0x00800216                PROVIDE (__data_end, .)
+                0x0080021a                . = ALIGN (0x2)
+                0x0080021a                _edata = .
+                0x0080021a                PROVIDE (__data_end, .)
 
-.bss            0x00800216        0x0
+.bss            0x0080021a        0x0
                 [!provide]                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
  *(COMMON)
                 [!provide]                PROVIDE (__bss_end, .)
                 0x00000234                __data_load_start = LOADADDR (.data)
-                0x0000024a                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x0000024e                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800216        0x0
+.noinit         0x0080021a        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800216                _end = .
+                0x0080021a                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -446,11 +445,11 @@ END GROUP
  *(.debug_frame)
  .debug_frame   0x00000000       0xb8 main.o
 
-.debug_str      0x00000000      0x5eb
+.debug_str      0x00000000      0x620
  *(.debug_str)
  .debug_str     0x00000000      0x3e6 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_str     0x000003e6      0x205 main.o
-                                0x23e (size before relaxing)
+ .debug_str     0x000003e6      0x23a main.o
+                                0x273 (size before relaxing)
 
 .debug_loc      0x00000000      0x25c
  *(.debug_loc)

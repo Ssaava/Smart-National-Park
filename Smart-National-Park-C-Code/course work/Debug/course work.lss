@@ -3,29 +3,29 @@ course work.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000016  00800200  00000234  000002a8  2**0
+  0 .data         0000001a  00800200  00000234  000002a8  2**0
                   CONTENTS, ALLOC, LOAD, DATA
   1 .text         00000234  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  000002be  2**0
+  2 .comment      00000030  00000000  00000000  000002c2  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000002f0  2**2
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000002f4  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000038  00000000  00000000  00000330  2**0
+  4 .debug_aranges 00000038  00000000  00000000  00000334  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000e28  00000000  00000000  00000368  2**0
+  5 .debug_info   00000e28  00000000  00000000  0000036c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000c97  00000000  00000000  00001190  2**0
+  6 .debug_abbrev 00000c97  00000000  00000000  00001194  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000041b  00000000  00000000  00001e27  2**0
+  7 .debug_line   0000041b  00000000  00000000  00001e2b  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  000000b8  00000000  00000000  00002244  2**2
+  8 .debug_frame  000000b8  00000000  00000000  00002248  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000005eb  00000000  00000000  000022fc  2**0
+  9 .debug_str    00000620  00000000  00000000  00002300  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000025c  00000000  00000000  000028e7  2**0
+ 10 .debug_loc    0000025c  00000000  00000000  00002920  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000028  00000000  00000000  00002b43  2**0
+ 11 .debug_ranges 00000028  00000000  00000000  00002b7c  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -167,7 +167,7 @@ Disassembly of section .text:
  102:	02 c0       	rjmp	.+4      	; 0x108 <__do_copy_data+0x14>
  104:	07 90       	elpm	r0, Z+
  106:	0d 92       	st	X+, r0
- 108:	a6 31       	cpi	r26, 0x16	; 22
+ 108:	aa 31       	cpi	r26, 0x1A	; 26
  10a:	b1 07       	cpc	r27, r17
  10c:	d9 f7       	brne	.-10     	; 0x104 <__do_copy_data+0x10>
  10e:	3b d0       	rcall	.+118    	; 0x186 <main>
@@ -373,7 +373,7 @@ ISR(INT0_vect){
 	PORTJ = 0x00;
  1fe:	18 82       	st	Y, r1
 	
-	displayMessage("register");
+	displayMessage("register here");
  200:	8c e0       	ldi	r24, 0x0C	; 12
  202:	92 e0       	ldi	r25, 0x02	; 2
  204:	9a df       	rcall	.-204    	; 0x13a <_Z14displayMessagePc>
