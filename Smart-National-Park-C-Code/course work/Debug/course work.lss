@@ -3,35 +3,10 @@ course work.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-<<<<<<< HEAD
-  0 .data         0000001a  00800200  00000234  000002a8  2**0
-=======
   0 .data         00000196  00800200  000018aa  0000193e  2**0
->>>>>>> main
                   CONTENTS, ALLOC, LOAD, DATA
   1 .text         000018aa  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-<<<<<<< HEAD
-  2 .comment      00000030  00000000  00000000  000002c2  2**0
-                  CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000002f4  2**2
-                  CONTENTS, READONLY
-  4 .debug_aranges 00000038  00000000  00000000  00000334  2**0
-                  CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000e28  00000000  00000000  0000036c  2**0
-                  CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000c97  00000000  00000000  00001194  2**0
-                  CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000041b  00000000  00000000  00001e2b  2**0
-                  CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  000000b8  00000000  00000000  00002248  2**2
-                  CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000620  00000000  00000000  00002300  2**0
-                  CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000025c  00000000  00000000  00002920  2**0
-                  CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000028  00000000  00000000  00002b7c  2**0
-=======
   2 .bss          0000004a  00800396  00800396  00001ad4  2**0
                   ALLOC
   3 .comment      0000005c  00000000  00000000  00001ad4  2**0
@@ -53,7 +28,6 @@ Idx Name          Size      VMA       LMA       File off  Algn
  11 .debug_loc    00001161  00000000  00000000  000061ea  2**0
                   CONTENTS, READONLY, DEBUGGING
  12 .debug_ranges 00000058  00000000  00000000  0000734b  2**0
->>>>>>> main
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -229,24 +203,6 @@ Disassembly of section .text:
      14a:	00 e0       	ldi	r16, 0x00	; 0
      14c:	0c bf       	out	0x3c, r16	; 60
 
-<<<<<<< HEAD
-000000f4 <__do_copy_data>:
-  f4:	12 e0       	ldi	r17, 0x02	; 2
-  f6:	a0 e0       	ldi	r26, 0x00	; 0
-  f8:	b2 e0       	ldi	r27, 0x02	; 2
-  fa:	e4 e3       	ldi	r30, 0x34	; 52
-  fc:	f2 e0       	ldi	r31, 0x02	; 2
-  fe:	00 e0       	ldi	r16, 0x00	; 0
- 100:	0b bf       	out	0x3b, r16	; 59
- 102:	02 c0       	rjmp	.+4      	; 0x108 <__do_copy_data+0x14>
- 104:	07 90       	elpm	r0, Z+
- 106:	0d 92       	st	X+, r0
- 108:	aa 31       	cpi	r26, 0x1A	; 26
- 10a:	b1 07       	cpc	r27, r17
- 10c:	d9 f7       	brne	.-10     	; 0x104 <__do_copy_data+0x10>
- 10e:	3b d0       	rcall	.+118    	; 0x186 <main>
- 110:	8f c0       	rjmp	.+286    	; 0x230 <_exit>
-=======
 0000014e <__do_copy_data>:
      14e:	13 e0       	ldi	r17, 0x03	; 3
      150:	a0 e0       	ldi	r26, 0x00	; 0
@@ -261,7 +217,6 @@ Disassembly of section .text:
      162:	a6 39       	cpi	r26, 0x96	; 150
      164:	b1 07       	cpc	r27, r17
      166:	d9 f7       	brne	.-10     	; 0x15e <__do_copy_data+0x10>
->>>>>>> main
 
 00000168 <__do_clear_bss>:
      168:	23 e0       	ldi	r18, 0x03	; 3
@@ -2262,12 +2217,6 @@ ISR(INT0_vect){
 	PORTJ = 0x00;
      d30:	18 82       	st	Y, r1
 	
-<<<<<<< HEAD
-	displayMessage("register here");
- 200:	8c e0       	ldi	r24, 0x0C	; 12
- 202:	92 e0       	ldi	r25, 0x02	; 2
- 204:	9a df       	rcall	.-204    	; 0x13a <_Z14displayMessagePc>
-=======
 	displayMessage("register mode", 0);
      d32:	60 e0       	ldi	r22, 0x00	; 0
      d34:	70 e0       	ldi	r23, 0x00	; 0
@@ -2303,7 +2252,6 @@ ISR(INT0_vect){
 	inputNum = 0;
      d64:	10 92 df 03 	sts	0x03DF, r1	; 0x8003df <inputNum+0x1>
      d68:	10 92 de 03 	sts	0x03DE, r1	; 0x8003de <inputNum>
->>>>>>> main
 }
      d6c:	ff 91       	pop	r31
      d6e:	ef 91       	pop	r30
