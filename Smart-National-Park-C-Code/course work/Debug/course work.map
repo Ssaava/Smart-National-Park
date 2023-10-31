@@ -792,11 +792,11 @@ END GROUP
  *(.debug_frame)
  .debug_frame   0x00000000      0x1bc main.o
 
-.debug_str      0x00000000      0x81a
+.debug_str      0x00000000      0x83d
  *(.debug_str)
  .debug_str     0x00000000      0x3e6 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega2560/avr6/crtatmega2560.o
- .debug_str     0x000003e6      0x434 main.o
-                                0x46d (size before relaxing)
+ .debug_str     0x000003e6      0x457 main.o
+                                0x490 (size before relaxing)
 
 .debug_loc      0x00000000     0x1161
  *(.debug_loc)

@@ -1,2 +1,5 @@
-# donot remove these lines please 
+# donot remove these lines please
 *.vscode
+*.dist
+/Smart-National-Park-C-Code/course work/Debug/**/
+/Smart-National-Park-C-Code/.vs/**/

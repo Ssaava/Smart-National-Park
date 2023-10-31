@@ -23,11 +23,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  000001bc  00000000  00000000  00005814  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    0000081a  00000000  00000000  000059d0  2**0
+ 10 .debug_str    0000083d  00000000  00000000  000059d0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00001161  00000000  00000000  000061ea  2**0
+ 11 .debug_loc    00001161  00000000  00000000  0000620d  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000058  00000000  00000000  0000734b  2**0
+ 12 .debug_ranges 00000058  00000000  00000000  0000736e  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -318,7 +318,7 @@ void displayMessage(char message[], int device){
 	if (device == 0)
      1da:	67 2b       	or	r22, r23
      1dc:	21 f5       	brne	.+72     	; 0x226 <_Z14displayMessagePci+0x56>
-	{
+	{///gate
 		PORTG &= ~(1 << PG3); //command mode
      1de:	84 b3       	in	r24, 0x14	; 20
      1e0:	87 7f       	andi	r24, 0xF7	; 247
@@ -693,7 +693,7 @@ void displayDefaultFridgeMessage(){
      3ea:	0f be       	out	0x3f, r0	; 63
      3ec:	cd bf       	out	0x3d, r28	; 61
 		
-		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr);
+		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr); //concatenate strings
 		
 		
 		displayMessage(buf, 1);
@@ -705,7 +705,7 @@ void displayDefaultFridgeMessage(){
 
 void displayDefaultFridgeMessage(){
 		//display fridge message
-		int numLen = (int)((ceil(log10(bottleCost)) + 1) * sizeof(char));
+		int numLen = (int)((ceil(log10(bottleCost)) + 1) * sizeof(char)); //to get the length of an integer
      3f2:	e0 90 02 02 	lds	r14, 0x0202	; 0x800202 <bottleCost>
      3f6:	f0 90 03 02 	lds	r15, 0x0203	; 0x800203 <bottleCost+0x1>
      3fa:	b7 01       	movw	r22, r14
@@ -752,7 +752,7 @@ void displayDefaultFridgeMessage(){
 		char* msg = "ENTER IN NO BOTTLE @";
 		char buf[1000];
 		
-		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr);
+		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr); //concatenate strings
      442:	1f 93       	push	r17
      444:	0f 93       	push	r16
      446:	83 e2       	ldi	r24, 0x23	; 35
@@ -1622,7 +1622,7 @@ void monitorGateKeyPad(){
      98c:	90 91 df 03 	lds	r25, 0x03DF	; 0x8003df <inputNum+0x1>
      990:	91 83       	std	Z+1, r25	; 0x01
      992:	80 83       	st	Z, r24
-				inputNum = 0;
+				inputNum = 0; //resett
      994:	10 92 df 03 	sts	0x03DF, r1	; 0x8003df <inputNum+0x1>
      998:	10 92 de 03 	sts	0x03DE, r1	; 0x8003de <inputNum>
 				displayMessage("TOURISTS > 10yrs", 0);
@@ -1679,7 +1679,7 @@ void monitorGateKeyPad(){
      a00:	83 30       	cpi	r24, 0x03	; 3
      a02:	91 05       	cpc	r25, r1
      a04:	89 f5       	brne	.+98     	; 0xa68 <_Z17monitorGateKeyPadv+0x17c>
-				// record the number of tourist below 10 yrs
+				// plate NO
 				touristCars[currentCapacity].plateNo = inputNum;
      a06:	80 91 d8 03 	lds	r24, 0x03D8	; 0x8003d8 <currentCapacity>
      a0a:	90 91 d9 03 	lds	r25, 0x03D9	; 0x8003d9 <currentCapacity+0x1>
@@ -2217,6 +2217,7 @@ ISR(INT0_vect){
 	PORTJ = 0x00;
      d30:	18 82       	st	Y, r1
 	
+
 	displayMessage("register mode", 0);
      d32:	60 e0       	ldi	r22, 0x00	; 0
      d34:	70 e0       	ldi	r23, 0x00	; 0
@@ -2224,7 +2225,7 @@ ISR(INT0_vect){
      d38:	93 e0       	ldi	r25, 0x03	; 3
      d3a:	4a da       	rcall	.-2924   	; 0x1d0 <_Z14displayMessagePci>
 	
-	
+	//modes 1-for registering tourists < 10, 2-registering tourists >10
 	mode = 1;
      d3c:	81 e0       	ldi	r24, 0x01	; 1
      d3e:	90 e0       	ldi	r25, 0x00	; 0
@@ -2252,6 +2253,7 @@ ISR(INT0_vect){
 	inputNum = 0;
      d64:	10 92 df 03 	sts	0x03DF, r1	; 0x8003df <inputNum+0x1>
      d68:	10 92 de 03 	sts	0x03DE, r1	; 0x8003de <inputNum>
+
 }
      d6c:	ff 91       	pop	r31
      d6e:	ef 91       	pop	r30

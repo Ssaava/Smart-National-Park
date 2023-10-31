@@ -59,7 +59,7 @@ void latch(int device){
 
 void displayMessage(char message[], int device){
 	if (device == 0)
-	{
+	{///gate
 		PORTG &= ~(1 << PG3); //command mode
 		latch(0);
 		
@@ -145,7 +145,7 @@ void recordAndDisplay(int num, int device) {
 
 void displayDefaultFridgeMessage(){
 		//display fridge message
-		int numLen = (int)((ceil(log10(bottleCost)) + 1) * sizeof(char));
+		int numLen = (int)((ceil(log10(bottleCost)) + 1) * sizeof(char)); //to get the length of an integer
 
 		char bottleCostStr[numLen];
 		sprintf(bottleCostStr, "%d", bottleCost);
@@ -154,7 +154,7 @@ void displayDefaultFridgeMessage(){
 		char* msg = "ENTER IN NO BOTTLE @";
 		char buf[1000];
 		
-		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr);
+		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr); //concatenate strings
 		
 		
 		displayMessage(buf, 1);
@@ -399,7 +399,7 @@ void monitorGateKeyPad(){
 			if(mode == 1){
 				// record the number of tourist below 10 yrs
 				touristCars[currentCapacity].touristBelow10 = inputNum;
-				inputNum = 0;
+				inputNum = 0; //resett
 				displayMessage("TOURISTS > 10yrs", 0);
 				mode = 2;
 			}
@@ -411,7 +411,7 @@ void monitorGateKeyPad(){
 				mode = 3;
 			}
 			else if(mode == 3){
-				// record the number of tourist below 10 yrs
+				// plate NO
 				touristCars[currentCapacity].plateNo = inputNum;
 				inputNum = 0;
 				displayMessage("TOURISTS RECORDED", 0);
@@ -535,7 +535,7 @@ ISR(INT0_vect){
 
 	displayMessage("register mode", 0);
 	
-	
+	//modes 1-for registering tourists < 10, 2-registering tourists >10
 	mode = 1;
 	
 	
