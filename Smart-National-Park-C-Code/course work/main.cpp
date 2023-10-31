@@ -58,8 +58,8 @@ void latch(int device){
 
 
 void displayMessage(char message[], int device){
-	if (device == 0)
-	{///gate
+	if (device == 0) //write to gate LCD
+	{
 		PORTG &= ~(1 << PG3); //command mode
 		latch(0);
 		
@@ -80,7 +80,7 @@ void displayMessage(char message[], int device){
 			latch(0);
 		}
 	} 
-	else
+	else //write to fridge LCD
 	{
 		PORTC &= ~(1 << PC3); //command mode
 		latch(1);
@@ -242,10 +242,10 @@ void monitorFridgeKeyPad(){
 					sprintf(bottlesStr, "%d", totalBottles);
 
 					
-					char* msg = "ENTER BOTTLES less than ";
+					// char* msg = "ENTER BOTTLES less than ";
 					char buf[1000];
 					
-					snprintf(buf, sizeof(buf), "%s%s", msg, bottlesStr);
+					sprintf(buf, sizeof(buf), "ENTER BOTTLES less than  %s", bottlesStr);
 					displayMessage(buf, 1);
 				}
 				else{
@@ -256,11 +256,11 @@ void monitorFridgeKeyPad(){
 					char expectedMoneyStr[numLen];
 					sprintf(expectedMoneyStr, "%d", expectedMoney);
 					
-					char* msg = "ADD ";
-					char* ms2 = " IN THE MONEY SLOT";
+					// char* msg = "ADD ";
+					// char* ms2 = " IN THE MONEY SLOT";
 					char buf[1000];
 					
-					snprintf(buf, sizeof(buf), "%s%s%s", msg, expectedMoneyStr, ms2);
+					sprintf(buf, sizeof(buf), "ADD %s IN THE MONEY SLOT", expectedMoneyStr);
 					
 					displayMessage(buf, 1);
 					fridgeMode = 1;
