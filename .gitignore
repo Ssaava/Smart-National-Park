@@ -1,5 +1,10 @@
 # donot remove these lines please
-*.vscode
 *.dist
-/Smart-National-Park-C-Code/course work/Debug/**/
-/Smart-National-Park-C-Code/.vs/**/
+*.vscode
+Project Backups
+/Smart-National-Park-C-Code/.vs
+/Smart-National-Park-C-Code/course work/Debug
+/Course work.pdsprj.DESKTOP-CKD3EVQ.RASHID.workspace
+/Course work.pdsprj.EMMA.EMMA.workspace
+/Smart-National-Park-Proteous.pdsprj.EMMA.EMMA.workspace
+/Backup Of Smart-National-Park-Proteous.pdsbak
