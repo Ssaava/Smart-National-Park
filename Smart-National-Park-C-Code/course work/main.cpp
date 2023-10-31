@@ -245,8 +245,9 @@ void monitorFridgeKeyPad(){
 					// char* msg = "ENTER BOTTLES less than ";
 					char buf[1000];
 					
-					sprintf(buf, sizeof(buf), "ENTER BOTTLES less than  %s", bottlesStr);
+					sprintf(buf, "ENTER BOTTLES less than  %s", bottlesStr);
 					displayMessage(buf, 1);
+					
 				}
 				else{
 					expectedMoney = fridgeNum * bottleCost;
@@ -260,7 +261,7 @@ void monitorFridgeKeyPad(){
 					// char* ms2 = " IN THE MONEY SLOT";
 					char buf[1000];
 					
-					sprintf(buf, sizeof(buf), "ADD %s IN THE MONEY SLOT", expectedMoneyStr);
+					sprintf(buf, "ADD %s IN THE MONEY SLOT", expectedMoneyStr);
 					
 					displayMessage(buf, 1);
 					fridgeMode = 1;
