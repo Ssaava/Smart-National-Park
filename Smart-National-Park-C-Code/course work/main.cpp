@@ -20,7 +20,7 @@ int currentCapacity = 0;
 int attendantPin = 2222;
 int bottleCost = 1500;
 int fridgeNum = 0;
-int inputBottles = 0;
+// int inputBottles = 0;
 int totalBottles = 10;
 int collectedMoney = 0;
 int expectedMoney = 0;
@@ -153,7 +153,7 @@ void displayDefaultFridgeMessage(){
 		sprintf(bottleCostStr, "%d", bottleCost);
 
 		
-		char* msg = "ENTER IN NO BOTTLE @";
+		char* msg = "ENTER IN NO OF BOTTLES @";
 		char buf[1000];
 		
 		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr); //concatenate strings
