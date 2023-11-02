@@ -20,6 +20,7 @@ int currentCapacity = 0;
 int attendantPin = 2222;
 int bottleCost = 1500;
 int fridgeNum = 0;
+int inputBottles = 0;
 int totalBottles = 10;
 int collectedMoney = 0;
 int expectedMoney = 0;
@@ -138,6 +139,7 @@ void recordAndDisplay(int num, int device) {
 	}
 	else{
 		fridgeNum = (fridgeNum * 10) + num; // Update inputNum
+		inputBottles = fridgeNum;
 		displayNum(fridgeNum, 1);
 	}
 	
@@ -270,12 +272,13 @@ void monitorFridgeKeyPad(){
 			else if (fridgeMode == 1)
 			{
 				// if (fridgeNum >= expectedMoney)
-				if ((PINE & 0b01000000) == 0 && totalBottles > 0)
+				if ((PINE & 0b01000000) == 0 && inputBottles > 0)
 				{
-					collectedMoney += fridgeNum;
-					int bottles = expectedMoney / bottleCost;
-				
-					totalBottles = 0;
+					// collectedMoney += fridgeNum;
+					collectedMoney += expectedMoney;
+					// int bottles = expectedMoney / bottleCost;
+					// totalBottles -= bottles;
+					
 					
 					displayMessage("MONEY SLOT OPENING", 1);
 					
@@ -293,10 +296,10 @@ void monitorFridgeKeyPad(){
 					PORTC &= ~(1 << PC4); //stop motor for money slot
 					
 					//start of the fridge opening to release a bottle
-					for(int i = 0; i < bottles; i++){
+					for(int i = 0; i < inputBottles; i++){
 						displayMessage("OPENING BOTTLE SLOT", 1);
 						PORTC |= (1 << PC6);
-						_delay_ms(2000);
+						_delay_ms(1000);
 						
 						PORTC &= ~(1 << PC6);
 						displayMessage("PICK YOUR BOTTLE", 1);
@@ -304,7 +307,7 @@ void monitorFridgeKeyPad(){
 						
 						displayMessage("CLOSING BOTTLE SLOT", 1);
 						PORTC |= (1 << PC7);
-						_delay_ms(2000);
+						_delay_ms(1000);
 
 						PORTC &= ~(1 << PC7); //stop motor for bottle release
 						_delay_ms(100);
@@ -314,14 +317,14 @@ void monitorFridgeKeyPad(){
 					//end of the fridge releasing a bottle
 					
 					fridgeMode = 0;
-					
+					inputBottles = 0; //reset the number of bottles entered by the user
 					displayDefaultFridgeMessage();
 					
 				}
-				else{
+				// else{
 					
-					displayMessage("FAILED !,INSUFFICIENT MONEY", 1);
-				}
+				// 	displayMessage("FAILED !,INSUFFICIENT MONEY", 1);
+				// }
 			}
 			
 			
