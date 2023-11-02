@@ -20,6 +20,7 @@ int currentCapacity = 0;
 int attendantPin = 2222;
 int bottleCost = 1500;
 int fridgeNum = 0;
+// int inputBottles = 0;
 int totalBottles = 10;
 int collectedMoney = 0;
 int expectedMoney = 0;
@@ -138,6 +139,7 @@ void recordAndDisplay(int num, int device) {
 	}
 	else{
 		fridgeNum = (fridgeNum * 10) + num; // Update inputNum
+		inputBottles = fridgeNum;
 		displayNum(fridgeNum, 1);
 	}
 	
@@ -151,7 +153,7 @@ void displayDefaultFridgeMessage(){
 		sprintf(bottleCostStr, "%d", bottleCost);
 
 		
-		char* msg = "ENTER IN NO BOTTLE @";
+		char* msg = "ENTER IN NO OF BOTTLES @";
 		char buf[1000];
 		
 		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr); //concatenate strings
@@ -269,16 +271,19 @@ void monitorFridgeKeyPad(){
 			}
 			else if (fridgeMode == 1)
 			{
-				if (fridgeNum >= expectedMoney)
+				// if (fridgeNum >= expectedMoney)
+				if ((PINE & 0b01000000) == 0 && inputBottles > 0)
 				{
-					collectedMoney += fridgeNum;
+					// collectedMoney += fridgeNum;
+					collectedMoney += expectedMoney;
 					int bottles = expectedMoney / bottleCost;
-					totalBottles -= bottles;
+					// totalBottles -= bottles;
+					
 					
 					displayMessage("MONEY SLOT OPENING", 1);
 					
 					PORTC |= (1 << PC5);
-					_delay_ms(2000);
+					_delay_ms(1000);
 					
 					PORTC &= ~(1 << PC5);
 					displayMessage("ADD THE MONEY", 1);
@@ -286,32 +291,43 @@ void monitorFridgeKeyPad(){
 					
 					displayMessage("CLOSING SLOT", 1);
 					PORTC |= (1 << PC4);
-					_delay_ms(2000);
+					_delay_ms(1000);
 					
-					PORTC &= ~(1 << PC4); //stop motor
+					PORTC &= ~(1 << PC4); //stop motor for money slot
+					_delay_ms(10);
+
+					//start of the fridge opening to release a bottle
+					for(int i = 0; i < bottles; i++){
+						displayMessage("OPENING BOTTLE SLOT", 1);
+						PORTC |= (1 << PC6);
+						_delay_ms(1000);
+						
+						PORTC &= ~(1 << PC6);
+						displayMessage("PICK YOUR BOTTLE", 1);
+						_delay_ms(2000);
+						
+						displayMessage("CLOSING BOTTLE SLOT", 1);
+						PORTC |= (1 << PC7);
+						_delay_ms(1000);
+
+						PORTC &= ~(1 << PC7); //stop motor for bottle release
+						_delay_ms(10);
+					}
 					
-					displayMessage("OPENING BOTTLE SLOT", 1);
-					PORTC |= (1 << PC6);
-					_delay_ms(2000);
 					
-					PORTC &= ~(1 << PC6);
-					displayMessage("PICK YOUR BOTTLE", 1);
-					_delay_ms(2000);
+					//end of the fridge releasing a bottle
 					
-					displayMessage("CLOSING BOTTLE SLOT", 1);
-					PORTC |= (1 << PC7);
-					_delay_ms(2000);
-					
-					PORTC &= ~(1 << PC7); //stop motor
 					fridgeMode = 0;
-					
+					//inputBottles = 0; //reset the number of bottles entered by the user
+					displayMessage("THANK YOU", 1);
+					_delay_ms(1000);
 					displayDefaultFridgeMessage();
 					
 				}
-				else{
+				// else{
 					
-					displayMessage("FAILED !,INSUFFICIENT MONEY", 1);
-				}
+				// 	displayMessage("FAILED !,INSUFFICIENT MONEY", 1);
+				// }
 			}
 			
 			
@@ -527,7 +543,7 @@ void monitorGateKeyPad(){
 
 ISR(INT0_vect){
 	PORTJ = 0xff;
-	displayMessage("Car at Gate", 0);
+	displayMessage("Incoming Tourist Vehicle", 0);
 	
 	_delay_ms(2000);
 	
