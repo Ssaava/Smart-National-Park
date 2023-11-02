@@ -290,19 +290,26 @@ void monitorFridgeKeyPad(){
 					
 					PORTC &= ~(1 << PC4); //stop motor
 					
-					displayMessage("OPENING BOTTLE SLOT", 1);
-					PORTC |= (1 << PC6);
-					_delay_ms(2000);
+					//start of the fridge opening to release a bottle
+					for(int i = 0; i < bottles; i++){
+						displayMessage("OPENING BOTTLE SLOT", 1);
+						PORTC |= (1 << PC6);
+						_delay_ms(2000);
+						
+						PORTC &= ~(1 << PC6);
+						displayMessage("PICK YOUR BOTTLE", 1);
+						_delay_ms(2000);
+						
+						displayMessage("CLOSING BOTTLE SLOT", 1);
+						PORTC |= (1 << PC7);
+						_delay_ms(2000);
+
+						PORTC &= ~(1 << PC7); //stop motor
+					}
 					
-					PORTC &= ~(1 << PC6);
-					displayMessage("PICK YOUR BOTTLE", 1);
-					_delay_ms(2000);
 					
-					displayMessage("CLOSING BOTTLE SLOT", 1);
-					PORTC |= (1 << PC7);
-					_delay_ms(2000);
+					//end of the fridge releasing a bottle
 					
-					PORTC &= ~(1 << PC7); //stop motor
 					fridgeMode = 0;
 					
 					displayDefaultFridgeMessage();
@@ -527,7 +534,7 @@ void monitorGateKeyPad(){
 
 ISR(INT0_vect){
 	PORTJ = 0xff;
-	displayMessage("Car at Gate", 0);
+	displayMessage("Incoming Tourist Vehicle", 0);
 	
 	_delay_ms(2000);
 	
