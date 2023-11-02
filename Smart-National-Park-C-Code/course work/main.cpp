@@ -269,11 +269,13 @@ void monitorFridgeKeyPad(){
 			}
 			else if (fridgeMode == 1)
 			{
-				if (fridgeNum >= expectedMoney)
+				// if (fridgeNum >= expectedMoney)
+				if ((PINE & 0b01000000) == 0 && totalBottles > 0)
 				{
 					collectedMoney += fridgeNum;
 					int bottles = expectedMoney / bottleCost;
-					totalBottles -= bottles;
+				
+					totalBottles = 0;
 					
 					displayMessage("MONEY SLOT OPENING", 1);
 					
@@ -288,7 +290,7 @@ void monitorFridgeKeyPad(){
 					PORTC |= (1 << PC4);
 					_delay_ms(2000);
 					
-					PORTC &= ~(1 << PC4); //stop motor
+					PORTC &= ~(1 << PC4); //stop motor for money slot
 					
 					//start of the fridge opening to release a bottle
 					for(int i = 0; i < bottles; i++){
@@ -304,7 +306,8 @@ void monitorFridgeKeyPad(){
 						PORTC |= (1 << PC7);
 						_delay_ms(2000);
 
-						PORTC &= ~(1 << PC7); //stop motor
+						PORTC &= ~(1 << PC7); //stop motor for bottle release
+						_delay_ms(100);
 					}
 					
 					
