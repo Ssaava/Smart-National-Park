@@ -247,6 +247,7 @@ void monitorFridgeKeyPad(){
 					
 					sprintf(buf, "ENTER BOTTLES less than  %s", bottlesStr);
 					displayMessage(buf, 1);
+					
 				}
 				else{
 					expectedMoney = fridgeNum * bottleCost;
