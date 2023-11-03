@@ -153,10 +153,15 @@ void displayDefaultFridgeMessage(){
 		sprintf(bottleCostStr, "%d", bottleCost);
 
 		
-		char* msg = "ENTER IN NO OF BOTTLES @";
+		// char* msg = "ENTER IN NO OF BOTTLES @";
 		char buf[1000];
 		
-		snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr); //concatenate strings
+		// snprintf(buf, sizeof(buf), "%s%s", msg, bottleCostStr); //concatenate strings
+		if(totalBottles > 0) {
+			sprintf(buf, "WATER AVAILABLE @%s", bottleCostStr);
+		}else {
+			sprintf(buf, "SORRY NO WATER AVAILABLE AT THE MOMENT", bottleCostStr);
+		}
 		
 		
 		displayMessage(buf, 1);
@@ -277,7 +282,7 @@ void monitorFridgeKeyPad(){
 					// collectedMoney += fridgeNum;
 					collectedMoney += expectedMoney;
 					int bottles = expectedMoney / bottleCost;
-					// totalBottles -= bottles;
+					totalBottles -= bottles; //reduce the number of bottles available
 					
 					
 					displayMessage("MONEY SLOT OPENING", 1);
@@ -311,7 +316,7 @@ void monitorFridgeKeyPad(){
 						_delay_ms(1000);
 
 						PORTC &= ~(1 << PC7); //stop motor for bottle release
-						_delay_ms(10);
+						_delay_ms(2000);
 					}
 					
 					
