@@ -318,7 +318,7 @@ void monitorFridgeKeyPad(){
 					//end of the fridge releasing a bottle
 					
 					fridgeMode = 0;
-					//inputBottles = 0; //reset the number of bottles entered by the user
+					inputBottles = 0; //reset the number of bottles entered by the user
 					displayMessage("THANK YOU", 1);
 					_delay_ms(1000);
 					displayDefaultFridgeMessage();
