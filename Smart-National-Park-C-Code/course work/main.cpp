@@ -545,25 +545,25 @@ void monitorFridgeKeyPad(){
 	PORTE = 0b11111011;
 	if ((PINE & 0b00001000) == 0)
 		{ //1
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			recordAndDisplay(1, 1);
 		}
 		
 		if ((PINE & 0b00010000) == 0)
 		{ //4
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			recordAndDisplay(4, 1);
 		}
 		
 		if ((PINE & 0b00100000) == 0)
 		{ //7
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			recordAndDisplay(7, 1);
 		}
 		
 		if ((PINE & 0b01000000) == 0)
 		{ //*
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			if (fridgeMode == 0)
 			{
 				if (totalBottles <= fridgeNum)
@@ -613,35 +613,35 @@ void monitorFridgeKeyPad(){
 					displayMessage("MONEY SLOT OPENING", 1);
 					
 					PORTC |= (1 << PC5);
-					_delay_ms(1000);
+					_delay_ms(10000);
 					
 					PORTC &= ~(1 << PC5);
 					displayMessage("ADD THE MONEY", 1);
-					_delay_ms(2000);
+					_delay_ms(10000);
 					
 					displayMessage("CLOSING SLOT", 1);
 					PORTC |= (1 << PC4);
-					_delay_ms(1000);
+					_delay_ms(10000);
 					
 					PORTC &= ~(1 << PC4); //stop motor for money slot
-					_delay_ms(10);
+					_delay_ms(10000);
 
 					//start of the fridge opening to release a bottle
 					for(int i = 0; i < bottles; i++){
 						displayMessage("OPENING BOTTLE SLOT", 1);
 						PORTC |= (1 << PC6);
-						_delay_ms(1000);
+						_delay_ms(10000);
 						
 						PORTC &= ~(1 << PC6);
 						displayMessage("PICK YOUR BOTTLE", 1);
-						_delay_ms(2000);
+						_delay_ms(10000);
 						
 						displayMessage("CLOSING BOTTLE SLOT", 1);
 						PORTC |= (1 << PC7);
-						_delay_ms(1000);
+						_delay_ms(10000);
 
 						PORTC &= ~(1 << PC7); //stop motor for bottle release
-						_delay_ms(2000);
+						_delay_ms(10000);
 					}
 					
 					
@@ -650,7 +650,7 @@ void monitorFridgeKeyPad(){
 					fridgeMode = 0;
 					inputBottles = 0; //reset the number of bottles entered by the user
 					displayMessage("THANK YOU", 1);
-					_delay_ms(1000);
+					_delay_ms(10000);
 					displayDefaultFridgeMessage();
 					
 				}
@@ -668,25 +668,25 @@ void monitorFridgeKeyPad(){
 		
 		if ((PINE & 0b00001000) == 0)
 		{ //3
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(2, 1);
 		}
 		
 		if ((PINE & 0b00010000) == 0)
 		{ //5
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(5, 1);
 		}
 		
 		if ((PINE & 0b00100000) == 0)
 		{ //8
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(8, 1);
 		}
 		
 		if ((PINE & 0b01000000) == 0)
 		{ //0
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(0, 1);
 			
 		}
@@ -695,13 +695,13 @@ void monitorFridgeKeyPad(){
 		
 		if ((PINE & 0b00001000) == 0)
 		{ //3
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(3, 1);
 		}
 		
 		if ((PINE & 0b00010000) == 0)
 		{ //5
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			recordAndDisplay(6, 1);
 		}
 		
@@ -724,25 +724,25 @@ void monitorGateKeyPad(){
 	PORTK = 0b11111011;
 	if ((PINK & 0b00001000) == 0)
 		{ //1
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			recordAndDisplay(1, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //4
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			recordAndDisplay(4, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //7
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			recordAndDisplay(7, 0);
 		}
 		
 		if ((PINK & 0b01000000) == 0)
 		{ //*
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			if(mode == 1){
 				// record the number of tourist below 10 yrs
 				touristCars[currentCapacity].touristBelow10 = inputNum;
@@ -784,25 +784,25 @@ void monitorGateKeyPad(){
 		
 		if ((PINK & 0b00001000) == 0)
 		{ //3
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(2, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //5
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(5, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //8
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(8, 0);
 		}
 		
 		if ((PINK & 0b01000000) == 0)
 		{ //0
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(0, 0);
 			
 		}
@@ -811,19 +811,19 @@ void monitorGateKeyPad(){
 		
 		if ((PINK & 0b00001000) == 0)
 		{ //3
-			_delay_ms(1000);  // to avoid the bouncing contact point error
+			_delay_ms(1500);  // to avoid the bouncing contact point error
 			recordAndDisplay(3, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //5
-			_delay_ms(1000); // to avoid the bouncing contact point error
+			_delay_ms(1500); // to avoid the bouncing contact point error
 			recordAndDisplay(6, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //8
-			_delay_ms(1000);
+			_delay_ms(1500);
 			recordAndDisplay(9, 0);
 		}
 		
