@@ -567,3 +567,5 @@ ISR(INT0_vect){
 	inputNum = 0;
 
 }
+// solving merge conflicts
+
