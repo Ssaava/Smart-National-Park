@@ -3,6 +3,15 @@
  *
  * Created: 23/10/2023 02:23:06
  * Author : RASHID
+ Group Member Names 
+ Name                      Student No.             RegNo.
+SSENTEZA EMMANUEL          2100713955              21/U/13955/PS 
+KISEJJERE RASHID           2100711543              21/U/11543/EVE
+SSEMAGANDA TREVOUR         2100718348              21/U/18348/EVE
+GUM PRISCILLA PENNINAH     2100717674              21/U/17674/EVE
+BINDYA PHILIP              2100714629              21/U/14629/EVE
+
+
  */ 
 #include <avr/io.h>
 #include <avr/interrupt.h>
