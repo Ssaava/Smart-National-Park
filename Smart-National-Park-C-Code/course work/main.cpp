@@ -613,35 +613,35 @@ void monitorFridgeKeyPad(){
 					displayMessage("MONEY SLOT OPENING", 1);
 					
 					PORTC |= (1 << PC5);
-					_delay_ms(10000);
+					_delay_ms(8000);
 					
 					PORTC &= ~(1 << PC5);
 					displayMessage("ADD THE MONEY", 1);
-					_delay_ms(10000);
+					_delay_ms(8000);
 					
 					displayMessage("CLOSING SLOT", 1);
 					PORTC |= (1 << PC4);
-					_delay_ms(10000);
+					_delay_ms(8000);
 					
 					PORTC &= ~(1 << PC4); //stop motor for money slot
-					_delay_ms(10000);
+					_delay_ms(8000);
 
 					//start of the fridge opening to release a bottle
 					for(int i = 0; i < bottles; i++){
 						displayMessage("OPENING BOTTLE SLOT", 1);
 						PORTC |= (1 << PC6);
-						_delay_ms(10000);
+						_delay_ms(8000);
 						
 						PORTC &= ~(1 << PC6);
 						displayMessage("PICK YOUR BOTTLE", 1);
-						_delay_ms(10000);
+						_delay_ms(8000);
 						
 						displayMessage("CLOSING BOTTLE SLOT", 1);
 						PORTC |= (1 << PC7);
-						_delay_ms(10000);
+						_delay_ms(8000);
 
 						PORTC &= ~(1 << PC7); //stop motor for bottle release
-						_delay_ms(10000);
+						_delay_ms(8000);
 					}
 					
 					
@@ -650,7 +650,7 @@ void monitorFridgeKeyPad(){
 					fridgeMode = 0;
 					inputBottles = 0; //reset the number of bottles entered by the user
 					displayMessage("THANK YOU", 1);
-					_delay_ms(10000);
+					_delay_ms(8000);
 					displayDefaultFridgeMessage();
 					
 				}
