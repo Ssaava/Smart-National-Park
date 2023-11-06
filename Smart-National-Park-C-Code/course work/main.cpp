@@ -242,15 +242,21 @@ void displayTerminalMsg(char *msg){
 
 bool isStringEqual(char *str1, char *str2){
 	int i;
-	
-	for (i =0; i < strlen(str2); i++)
+	if (terminalIndex == strlen(str2))
 	{
-		if (str1[i] != str2[i])
+		
+		for (i =0; i < strlen(str2); i++)
 		{
-			return false;
+			if (str1[i] != str2[i])
+			{
+				return false;
+			}
 		}
-	}
+		
 	return true;
+	}
+
+	return false;
 }
 
 void displayTerminalInfo(char str[], int info){
