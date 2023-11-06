@@ -6,6 +6,7 @@
  */ 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/eeprom.h>
 #include <util/delay.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,6 +14,8 @@
 #include <avr/sleep.h>
 #define BAUDRATE 9600
 #define UBRR ((F_CPU/(BAUDRATE*16UL))-1) //UBRR=CPUclock/16/baud - 1 (from datasheet)
+#define DELAY 10000
+#define BUTTON_DELAY 1000
 
 #define CAPACITY 10
 
@@ -41,7 +44,7 @@ int inputBottles = 0;
 char terminalMenu[] = "SELECT AN OPTION \r\n\
 0. TURN OFF CONSOLE(THIS IS NECESSARY INODER TO BE ABLE TO INTERACT WITH THE REST OF SYSTEM)\r\n\
 1. TOTAL NUMBER OF TOURISTS CATEGORIZED BY AGE GROUP IN THE PARK\r\n\
-2. TOTAL NUMBER VEHICLES STILL IN THE PARK\r\n\
+2. ALL VEHICLES STILL IN THE PARK\r\n\
 3. AMOUNT COLLECTED BY THE PARK AGGREGATED BY FRIDGE NUMBER AND ENTRACE FUND.\r\n\
 4. TOTAL NUMBER OF DRIVERS IN THE PARK\r\n\
 5. NUMBER OF BOTTLES IN THE FRIDGE\r\n\
@@ -57,6 +60,8 @@ char terminalMenu[] = "SELECT AN OPTION \r\n\
 void monitorGateKeyPad();
 void monitorFridgeKeyPad();
 
+uint8_t address = 0x0a;
+
 struct TouristCar 
 {
 	int touristBelow10;
@@ -65,6 +70,7 @@ struct TouristCar
 };
 
 struct TouristCar touristCars[CAPACITY];
+
 
 void latch(int device){
 	if (device == 0)
@@ -157,7 +163,7 @@ void displayNum(int num, int device){
 	
 
 	displayMessage(numStr, device); // Display the updated inputNum
-	_delay_ms(1000);
+	_delay_ms(DELAY);
 }
 
 void recordAndDisplay(int num, int device) {
@@ -250,7 +256,7 @@ void displayTerminalInfo(char str[], int info){
 	
 	snprintf(buf, sizeof(buf), "%s%s", str, infoStr);
 	displayTerminalMsg(buf);
-	displayTerminalMsg("\r\n");
+	displayTerminalMsg("\r\n\r\n");
 	memset(buf, 0, strlen(buf));
 }
 
@@ -392,8 +398,14 @@ void attendantOperate(){
 				}
 				else if (isStringEqual(termialInput, "2"))
 				{
-					//2. TOTAL VEHICLES STILL IN THE PARK
-					displayTerminalInfo("TOTAL NUMBER OF VEHICLES STILL IN THE PARK = ", currentCapacity);
+					//2. ALL VEHICLES STILL IN THE PARK
+					displayTerminalMsg("BELOW ARE THE VEHICLE NUMBER PLATES STILL IN THE PARK \r\n");
+					for (int i = 0; i < currentCapacity; i++)
+					{
+						
+						displayTerminalInfo("VEHICLE - ", touristCars[i].plateNo);
+					}
+					
 					displayTerminalMsg(terminalMenu);
 				}
 				else if (isStringEqual(termialInput, "3"))
@@ -447,9 +459,6 @@ void attendantOperate(){
 					terminalMode = 3;
 				}
 				
-				
-				
-				
 			}
 		}
 		
@@ -486,6 +495,7 @@ int main(void)
 	
     /* Replace with your application code */
 	EIMSK |= (1 << INT0); //register the int 0 pin
+	EIMSK |= (1 << INT1); //register the int 1 pin
 	DDRJ = 0xff; //buzzer code
 	
 	DDRD = 0x00;
@@ -526,7 +536,7 @@ int main(void)
 	
 	displayTerminalMsg("SERAIL CONSOLE IS CURRENTLY OFF, PRESS # ON THE KEYPAD TO ACTIVATE IT \r\n\r\n");
 	
-
+	saveToEEPROM(7);
 	
     while (1) {
 		//PORTC = 0b00100000;
@@ -545,25 +555,25 @@ void monitorFridgeKeyPad(){
 	PORTE = 0b11111011;
 	if ((PINE & 0b00001000) == 0)
 		{ //1
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			recordAndDisplay(1, 1);
 		}
 		
 		if ((PINE & 0b00010000) == 0)
 		{ //4
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			recordAndDisplay(4, 1);
 		}
 		
 		if ((PINE & 0b00100000) == 0)
 		{ //7
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			recordAndDisplay(7, 1);
 		}
 		
 		if ((PINE & 0b01000000) == 0)
 		{ //*
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			if (fridgeMode == 0)
 			{
 				if (totalBottles <= fridgeNum)
@@ -668,25 +678,25 @@ void monitorFridgeKeyPad(){
 		
 		if ((PINE & 0b00001000) == 0)
 		{ //3
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(2, 1);
 		}
 		
 		if ((PINE & 0b00010000) == 0)
 		{ //5
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(5, 1);
 		}
 		
 		if ((PINE & 0b00100000) == 0)
 		{ //8
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(8, 1);
 		}
 		
 		if ((PINE & 0b01000000) == 0)
 		{ //0
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(0, 1);
 			
 		}
@@ -695,19 +705,19 @@ void monitorFridgeKeyPad(){
 		
 		if ((PINE & 0b00001000) == 0)
 		{ //3
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(3, 1);
 		}
 		
 		if ((PINE & 0b00010000) == 0)
 		{ //5
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			recordAndDisplay(6, 1);
 		}
 		
 		if ((PINE & 0b00100000) == 0)
 		{ //8
-			_delay_ms(1000);
+			_delay_ms(DELAY);
 			recordAndDisplay(9, 1);
 		}
 		
@@ -724,25 +734,25 @@ void monitorGateKeyPad(){
 	PORTK = 0b11111011;
 	if ((PINK & 0b00001000) == 0)
 		{ //1
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			recordAndDisplay(1, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //4
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			recordAndDisplay(4, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //7
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			recordAndDisplay(7, 0);
 		}
 		
 		if ((PINK & 0b01000000) == 0)
 		{ //*
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			if(mode == 1){
 				// record the number of tourist below 10 yrs
 				touristCars[currentCapacity].touristBelow10 = inputNum;
@@ -762,7 +772,7 @@ void monitorGateKeyPad(){
 				touristCars[currentCapacity].plateNo = inputNum;
 				inputNum = 0;
 				displayMessage("TOURISTS RECORDED", 0);
-				_delay_ms(1000);
+				_delay_ms(DELAY);
 				
 				openAndCloseGate();
 				
@@ -772,6 +782,33 @@ void monitorGateKeyPad(){
 			}
 			else if (mode == 4)
 			{
+				//exit model
+				int plateNo = inputNum;
+				
+				for (int i = 0; i < currentCapacity; i++)
+				{
+					//check if there's a car with the same plate No
+					if(touristCars[i].plateNo == plateNo){
+						//remove the plate number
+						displayMessage("CAR EXITED SUCCESSFULLY", 0);
+						
+						_delay_ms(DELAY);
+						mode = 0;
+						currentCapacity --;
+						
+						//delete the object from the array of tourist cars
+						for (int j = i; j < currentCapacity; j++)
+						{
+							touristCars[i] = touristCars[i+1];
+						}
+						
+						return;
+					}
+				}
+				
+				//There's no car with the same plate No
+				displayMessage("INVALID CAR NUMBER PLATE", 0);
+				
 				
 			}
 			else if (mode == 5)
@@ -784,25 +821,25 @@ void monitorGateKeyPad(){
 		
 		if ((PINK & 0b00001000) == 0)
 		{ //3
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(2, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //5
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(5, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //8
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(8, 0);
 		}
 		
 		if ((PINK & 0b01000000) == 0)
 		{ //0
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(0, 0);
 			
 		}
@@ -811,19 +848,19 @@ void monitorGateKeyPad(){
 		
 		if ((PINK & 0b00001000) == 0)
 		{ //3
-			_delay_ms(1500);  // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
 			recordAndDisplay(3, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //5
-			_delay_ms(1500); // to avoid the bouncing contact point error
+			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
 			recordAndDisplay(6, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //8
-			_delay_ms(1500);
+			_delay_ms(BUTTON_DELAY);
 			recordAndDisplay(9, 0);
 		}
 		
@@ -854,6 +891,29 @@ ISR(INT0_vect){
 	_delay_ms(2000);
 	
 	displayMessage("TOURISTS <10yrs", 0);
+	inputNum = 0;
+
+}
+
+
+ISR(INT1_vect){
+	PORTJ = 0xff;
+	displayMessage("EXITING VEHICLE", 0);
+	
+	_delay_ms(2000);
+	
+	PORTJ = 0x00;
+	
+
+	displayMessage("exit mode", 0);
+	
+	//modes 1-for registering tourists < 10, 2-registering tourists >10
+	mode = 4;
+	
+	
+	_delay_ms(2000);
+	
+	displayMessage("TOURIST PLATE NO", 0);
 	inputNum = 0;
 
 }
