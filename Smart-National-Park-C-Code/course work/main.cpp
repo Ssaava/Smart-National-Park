@@ -44,8 +44,7 @@ float readDataFromEEPROM(int key) {
 #define UBRR ((F_CPU/(BAUDRATE*16UL))-1) //UBRR=CPUclock/16/baud - 1 (from datasheet)
 #define BAUDRATE 9600
 #define UBRR ((F_CPU/(BAUDRATE*16UL))-1) //UBRR=CPUclock/16/baud - 1 (from datasheet)
-#define DELAY 15000
-#define BUTTON_DELAY 1000
+#define DELAY 5000
 
 #define CAPACITY 10
 
@@ -174,13 +173,17 @@ void openAndCloseGate(){
 	//open gate
 	displayMessage("OPENING GATE", 0);
 	PORTF = 0b00000010;
-	_delay_ms(2000);
+	_delay_ms(30000);
+	
+	PORTF = 0x00;
+	displayMessage("ENTER CAR",0);
+	_delay_ms(30000);
 	
 	//open gate
 	displayMessage("CLOSING GATE", 0);
 	PORTF = 0b00000001;
 	
-	_delay_ms(2000);
+	_delay_ms(30000);
 	PORTF = 0x00;
 }
 
@@ -597,25 +600,25 @@ void monitorFridgeKeyPad(){
 	PORTE = 0b11111011;
 	if ((PINE & 0b00001000) == 0)
 		{ //1
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			recordAndDisplay(1, 1);
 		}
 		
 		if ((PINE & 0b00010000) == 0)
 		{ //4
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			recordAndDisplay(4, 1);
 		}
 		
 		if ((PINE & 0b00100000) == 0)
 		{ //7
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			recordAndDisplay(7, 1);
 		}
 		
 		if ((PINE & 0b01000000) == 0)
 		{ //*
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			if (fridgeMode == 0)
 			{
 				if (totalBottles <= fridgeNum)
@@ -720,25 +723,25 @@ void monitorFridgeKeyPad(){
 		
 		if ((PINE & 0b00001000) == 0)
 		{ //3
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(2, 1);
 		}
 		
 		if ((PINE & 0b00010000) == 0)
 		{ //5
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(5, 1);
 		}
 		
 		if ((PINE & 0b00100000) == 0)
 		{ //8
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(8, 1);
 		}
 		
 		if ((PINE & 0b01000000) == 0)
 		{ //0
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(0, 1);
 			
 		}
@@ -747,13 +750,13 @@ void monitorFridgeKeyPad(){
 		
 		if ((PINE & 0b00001000) == 0)
 		{ //3
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(3, 1);
 		}
 		
 		if ((PINE & 0b00010000) == 0)
 		{ //5
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			recordAndDisplay(6, 1);
 		}
 		
@@ -776,25 +779,25 @@ void monitorGateKeyPad(){
 	PORTK = 0b11111011;
 	if ((PINK & 0b00001000) == 0)
 		{ //1
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			recordAndDisplay(1, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //4
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			recordAndDisplay(4, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //7
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			recordAndDisplay(7, 0);
 		}
 		
 		if ((PINK & 0b01000000) == 0)
 		{ //*
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			if(mode == 1){
 				// record the number of tourist below 10 yrs
 				touristCars[currentCapacity].touristBelow10 = inputNum;
@@ -863,25 +866,25 @@ void monitorGateKeyPad(){
 		
 		if ((PINK & 0b00001000) == 0)
 		{ //3
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(2, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //5
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(5, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //8
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(8, 0);
 		}
 		
 		if ((PINK & 0b01000000) == 0)
 		{ //0
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(0, 0);
 			
 		}
@@ -890,19 +893,19 @@ void monitorGateKeyPad(){
 		
 		if ((PINK & 0b00001000) == 0)
 		{ //3
-			_delay_ms(BUTTON_DELAY);  // to avoid the bouncing contact point error
+			_delay_ms(2000);  // to avoid the bouncing contact point error
 			recordAndDisplay(3, 0);
 		}
 		
 		if ((PINK & 0b00010000) == 0)
 		{ //5
-			_delay_ms(BUTTON_DELAY); // to avoid the bouncing contact point error
+			_delay_ms(2000); // to avoid the bouncing contact point error
 			recordAndDisplay(6, 0);
 		}
 		
 		if ((PINK & 0b00100000) == 0)
 		{ //8
-			_delay_ms(BUTTON_DELAY);
+			_delay_ms(2000);
 			recordAndDisplay(9, 0);
 		}
 		
