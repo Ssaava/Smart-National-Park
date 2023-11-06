@@ -817,7 +817,7 @@ void monitorGateKeyPad(){
 				touristCars[currentCapacity].plateNo = inputNum;
 				inputNum = 0;
 				displayMessage("TOURISTS RECORDED", 0);
-				_delay_ms(DELAY);
+				_delay_ms(10000);
 				
 				openAndCloseGate();
 				
