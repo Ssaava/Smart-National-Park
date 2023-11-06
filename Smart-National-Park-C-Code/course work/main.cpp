@@ -261,18 +261,7 @@ void displayTerminalMsg(char *msg){ //send message
 	}
 }
 
-bool isStringEqual(char *str1, char *str2){ //check every character in string being passed
-	int i;
-	
-	for (i =0; i < strlen(str2); i++)
-	{
-		if (str1[i] != str2[i])
-		{
-			return false;
-		}
-	}
-	return true;
-}
+
 
 void displayTerminalInfo(char str[], int info){ //concatenates message with int
 	int numLen = (int)((ceil(log10(info)) + 1) * sizeof(char));
@@ -303,6 +292,25 @@ int strToInt(char *str, int strLen){ //string(charater by character) to integer
 	return converted;
 }
 
+
+bool isStringEqual(char *str1, char *str2){
+	int i;
+	if (terminalIndex == strlen(str2))
+	{
+		
+		for (i =0; i < strlen(str2); i++)
+		{
+			if (str1[i] != str2[i])
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	return false;
+}
 
 
 void attendantOperate(){ //respomsible for all commands on serial console
@@ -522,300 +530,6 @@ void usart_receive(){ //receiving input (receives character by character)
 		terminalIndex++;
 	}
 }
-
-
-
-void usart_init(){
-	//set baud rate
-	UBRR1L = (unsigned char) UBRR;
-	UBRR1H = (unsigned char)(UBRR >> 8);
-	//enable rx/tx for USART1 and enable receive interrupt
-	UCSR1B |= (1<<TXEN1) | (1 << RXEN1);
-	//set frame format: 1 stop bit, 8bit data
-
-}
-
-
-
-void usart_send(unsigned char i){
-	
-	// Wait for the UDR1 register to be empty.
-	while(!(UCSR1A & (1 << UDRE1)));
-	// Write the data to the UDR1 register.
-	UDR1 = i;
-}
-
-
-void displayTerminalMsg(char *msg){
-	int i =0;
-	while(msg[i] != '\0'){
-		usart_send(msg[i]);
-		i++;
-	}
-}
-
-bool isStringEqual(char *str1, char *str2){
-	int i;
-	if (terminalIndex == strlen(str2))
-	{
-		
-		for (i =0; i < strlen(str2); i++)
-		{
-			if (str1[i] != str2[i])
-			{
-				return false;
-			}
-		}
-		
-	return true;
-	}
-
-	return false;
-}
-
-void displayTerminalInfo(char str[], int info){
-	int numLen = (int)((ceil(log10(info)) + 1) * sizeof(char));
-
-	char infoStr[numLen];
-	sprintf(infoStr, "%d", info);
-
-	int buff_len = strlen(str) + numLen;
-	
-	char buf[buff_len + 1];
-	
-	snprintf(buf, sizeof(buf), "%s%s", str, infoStr);
-	displayTerminalMsg(buf);
-	displayTerminalMsg("\r\n\r\n");
-	memset(buf, 0, strlen(buf));
-}
-
-int strToInt(char *str, int strLen){
-	int converted = 0;
-	int i = 0;
-	while (i < strLen)
-	{
-		int j = str[i] - '0'; //convert character to int
-		converted = (converted * 10) + j;
-		i++;
-	}
-	
-	return converted;
-}
-
-
-void attendantOperate(){
-	if (terminalMode == 1)
-	{
-		//login mode
-		if (isStringEqual(termialInput, attendantPin))
-		{
-			displayTerminalMsg("LOGIN SUCCESSFUL!! \r\n ");
-			displayTerminalMsg(terminalMenu);
-			isAttendantLoggedIn = true;
-			terminalMode = 0;
-			terminalIndex = 0;
-			termialInput[0] = '\0'; //reset
-			
-		}
-		else{
-			displayTerminalMsg("LOGIN FAILED, TRY AGAIN !! \r\n");
-		}
-	}
-	else if (terminalMode == 2)
-	{
-		//add new number
-		int newBottles = strToInt(termialInput, terminalIndex);
-		totalBottles = newBottles;
-		
-		displayTerminalInfo("BOTTLES REPLENISHED SUCCESSFULLY TO = ", totalBottles);
-		terminalMode = 0; //reset
-		displayTerminalMsg(terminalMenu);
-	}
-	else if (terminalMode == 3)
-	{
-		//add new number
-		int newCharge = strToInt(termialInput, terminalIndex);
-		chargeTouristsBelow10 = newCharge;
-		
-		displayTerminalInfo("CHARGE UPDATED SUCCESSFULLY TO = ", chargeTouristsBelow10);
-		terminalMode = 0; //reset
-		displayTerminalMsg(terminalMenu);
-	}
-	else if (terminalMode == 4)
-	{
-		//add new number
-		int newCharge = strToInt(termialInput, terminalIndex);
-		chargeTouristsAbove10 = newCharge;
-		
-		displayTerminalInfo("CHARGE UPDATED SUCCESSFULLY TO = ", chargeTouristsAbove10);
-		terminalMode = 0; //reset
-		displayTerminalMsg(terminalMenu);
-	}
-	else if (terminalMode == 5)
-	{
-		//add new number
-		int newCharge = strToInt(termialInput, terminalIndex);
-		bottleCost = newCharge;
-		
-		displayTerminalInfo("COST UPDATED SUCCESSFULLY TO = ", bottleCost);
-		terminalMode = 0; //reset
-		displayTerminalMsg(terminalMenu);
-	}
-	else{
-		if (isStringEqual(termialInput, "0"))
-		{
-			//turn off the console
-			displayTerminalMsg("\r\n TURNING OF TERMINAL.. PRESS # ON THE KEYPAD TO TURN IT BACK ON !!! \r\n");
-			terminalMode = 0;
-			terminalIndex = 0;
-			isTerminalOn = false;
-			termialInput[0] = '\0'; //reset
-		}
-		
-		else if (isStringEqual(termialInput, "7"))
-		{
-			displayTerminalMsg("\r\n ENTER IN PIN !!! \r\n");
-			terminalMode = 1;
-		}
-		
-		else{
-			if (isAttendantLoggedIn == false)
-			{
-				displayTerminalMsg("\r\n PLEASE LOGIN IN FIRST TO CONTINUE !!! \r\n");
-				displayTerminalMsg(terminalMenu);
-			}
-			else
-			{
-				if (isStringEqual(termialInput, "12"))
-				{
-					//all charges display
-					displayTerminalInfo("CURRENT CHARGE OF TOURISTS BELOW 10 = ", chargeTouristsBelow10);
-					displayTerminalInfo("CURRENT CHARGE OF TOURISTS ABOVE 10 = ", chargeTouristsAbove10);
-					displayTerminalInfo("CURRENT CHARGE OF FRIDGE BOTTLE = ", bottleCost);
-					displayTerminalMsg(terminalMenu);
-				}
-				else if (isStringEqual(termialInput, "11"))
-				{
-					//CHANGE BOTTLE COST
-					displayTerminalInfo("CURRENT BOTTLE COST = ", bottleCost);
-					displayTerminalMsg("ENTER IN THE NEW COST : \r\n");
-					terminalMode = 5;
-				}
-				else if (isStringEqual(termialInput, "10"))
-				{
-					//9. CHANGE CHARGE TOURISTS BELOW 10\r\n
-					displayTerminalInfo("CURRENT CHARGE OF TOURISTS ABOVE 10 = ", chargeTouristsAbove10);
-					displayTerminalMsg("ENTER IN THE NEW CHARGE : \r\n");
-					terminalMode = 4;
-				}
-				else if (isStringEqual(termialInput, "1"))
-				{
-					//1. TOTAL NUMBER OF TOURISTS CATEGORIZED BY AGE GROUP IN THE PARK
-					int totalBelow10= 0;
-					int totalAbove10 = 0;
-					int i = 0;
-					while ( i < currentCapacity)
-					{
-						totalAbove10 = totalAbove10 + touristCars[i].touristAbove10;
-						totalBelow10 = totalBelow10 + touristCars[i].touristBelow10;
-						i++;
-					}
-					
-					displayTerminalInfo("TOTAL TOURISTS BELOW 10 = ", totalBelow10);
-					displayTerminalInfo("TOTAL TOURISTS ABOVE 10 = ", totalAbove10);
-					displayTerminalMsg(terminalMenu);
-				}
-				else if (isStringEqual(termialInput, "2"))
-				{
-					//2. ALL VEHICLES STILL IN THE PARK
-					displayTerminalMsg("BELOW ARE THE VEHICLE NUMBER PLATES STILL IN THE PARK \r\n");
-					for (int i = 0; i < currentCapacity; i++)
-					{
-						
-						displayTerminalInfo("VEHICLE - ", touristCars[i].plateNo);
-					}
-					
-					displayTerminalMsg(terminalMenu);
-				}
-				else if (isStringEqual(termialInput, "3"))
-				{
-					// 3. AMOUNT COLLECTED BY THE PARK AGGREGATED BY FRIDGE NUMBER AND ENTRACE FUND.\r\n
-					int totalTouristsCollectedMoney= 0;
-					int i = 0;
-					while ( i < currentCapacity)
-					{
-						totalTouristsCollectedMoney += (touristCars[i].touristAbove10 * chargeTouristsAbove10) + (touristCars[i].touristBelow10 * chargeTouristsBelow10);
-						i++;
-					}
-					int totalAmount = totalTouristsCollectedMoney + collectedFridgeMoney;
-					
-					displayTerminalInfo("TOTAL COLLECTED MONEY FROM TOURISTS = ", totalTouristsCollectedMoney);
-					displayTerminalInfo("TOTAL COLLECTED MONEY FROM FRIDGE = ", collectedFridgeMoney);
-					displayTerminalInfo("TOTAL COLLECTED MONEY = ", totalAmount);
-					displayTerminalMsg(terminalMenu);
-					
-				}
-				else if (isStringEqual(termialInput, "4"))
-				{
-					//4. TOTAL DRIVERS
-					displayTerminalInfo("TOTAL NUMBER OF DRIVERS STILL IN THE PARK = ", currentCapacity);
-					displayTerminalMsg(terminalMenu);
-				}
-				else if (isStringEqual(termialInput, "5"))
-				{
-					//5. NUMBER OF BOTTLES IN THE FRIDGE\r\n
-					displayTerminalInfo("TOTAL NUMBER OF BOTTLES IN THE FRIDGE = ", totalBottles);
-					displayTerminalMsg(terminalMenu);
-				}
-				else if (isStringEqual(termialInput, "6"))
-				{
-					//6. REPLENISH FRIDGE\r\n
-					displayTerminalInfo("CURRENT NUMBER OF BOTTLES IN THE FRIDGE = ", totalBottles);
-					displayTerminalMsg("ENTER IN THE NEW NUMBER OF BOTTLES : \r\n");
-					terminalMode = 2;
-				}
-				else if (isStringEqual(termialInput, "8"))
-				{
-					//LOGOUT
-					displayTerminalMsg("LOGOUT SUCCESSFULL \r\n");
-					isAttendantLoggedIn = false;
-				}
-				else if (isStringEqual(termialInput, "9"))
-				{
-					//9. CHANGE CHARGE TOURISTS BELOW 10\r\n
-					displayTerminalInfo("CURRENT CHARGE OF TOURISTS BELOW 10 = ", chargeTouristsBelow10);
-					displayTerminalMsg("ENTER IN THE NEW CHARGE : \r\n");
-					terminalMode = 3;
-				}
-				
-			}
-		}
-		
-		terminalIndex = 0;
-		termialInput[0] = '\0'; //reset
-	}
-}
-
-void usart_receive(){
-	while(!(UCSR1A & (1 << RXC1)));
-	unsigned char i = UDR1;
-	if (i == 0x0D)
-	{
-		//Enter clicked
-		attendantOperate();
-	}
-	else if (i == 0x08)
-	{
-		//backspace
-		terminalIndex --;
-	}
-	else{
-		termialInput[terminalIndex] = i;
-		terminalIndex++;
-	}
-}
-
-
 
 
 int main(void)
