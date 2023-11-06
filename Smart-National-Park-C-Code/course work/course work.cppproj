@@ -43,25 +43,10 @@
     <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
     <avrtoolserialnumber />
     <avrdeviceexpectedsignature>0x1E9801</avrdeviceexpectedsignature>
-    <custom>
-      <ToolOptions>
-        <InterfaceProperties>
-        </InterfaceProperties>
-        <InterfaceName>
-        </InterfaceName>
-      </ToolOptions>
-      <ToolType>custom</ToolType>
-      <ToolNumber>
-      </ToolNumber>
-      <ToolName>Custom Programming Tool</ToolName>
-    </custom>
-    <avrtoolinterface />
     <com_atmel_avrdbg_tool_simulator>
       <ToolOptions xmlns="">
         <InterfaceProperties>
         </InterfaceProperties>
-        <InterfaceName>
-        </InterfaceName>
       </ToolOptions>
       <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
       <ToolNumber xmlns="">
