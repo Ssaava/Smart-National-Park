@@ -23,7 +23,7 @@ BINDYA PHILIP              2100714629              21/U/14629/EVE
 #include <avr/sleep.h>
 #define BAUDRATE 9600
 #define UBRR ((F_CPU/(BAUDRATE*16UL))-1) //UBRR=CPUclock/16/baud - 1 (from datasheet)
-#define DELAY 10000
+#define DELAY 15000
 #define BUTTON_DELAY 1000
 
 #define CAPACITY 10
