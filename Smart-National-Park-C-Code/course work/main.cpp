@@ -21,6 +21,27 @@ BINDYA PHILIP              2100714629              21/U/14629/EVE
 #include <string.h>
 #define F_CPU 16000000UL
 #include <avr/sleep.h>
+#include <avr/eeprom.h>
+
+// Define the EEPROM address to store data
+#define TOTAL_NUM_OF_PPLE 20
+#define PPLE_BELOW_10 64
+#define PPLE_ABOVE_10 30
+#define TOTAL_BOTTLES 60
+
+// Function to save data to EEPROM
+void saveDataToEEPROM(int key,int data) {
+	
+	eeprom_write_float((float*)key, (float)data);
+}
+
+// Function to read data from EEPROM
+float readDataFromEEPROM(int key) {
+	return eeprom_read_float((float*)key);
+}
+
+#define BAUDRATE 9600
+#define UBRR ((F_CPU/(BAUDRATE*16UL))-1) //UBRR=CPUclock/16/baud - 1 (from datasheet)
 #define BAUDRATE 9600
 #define UBRR ((F_CPU/(BAUDRATE*16UL))-1) //UBRR=CPUclock/16/baud - 1 (from datasheet)
 #define DELAY 15000
@@ -35,14 +56,14 @@ int fridgeMode = 0;
 int currentCapacity = 0;
 int bottleCost = 1500;
 int fridgeNum = 0;
-int totalBottles = 10;
+int totalBottles = (int)readDataFromEEPROM(TOTAL_BOTTLES);
 int collectedFridgeMoney = 0;
 int expectedMoney = 0;
 
 char termialInput[1000];
 char attendantPin[] = "2222";
-int chargeTouristsBelow10 = 2000;
-int chargeTouristsAbove10 = 5000;
+int chargeTouristsBelow10 = (int)readDataFromEEPROM(PPLE_BELOW_10);
+int chargeTouristsAbove10 = (int)readDataFromEEPROM(PPLE_ABOVE_10);
 int terminalIndex = 0;
 bool isAttendantLoggedIn = false;
 int terminalMode = 0;
@@ -53,7 +74,7 @@ int inputBottles = 0;
 char terminalMenu[] = "SELECT AN OPTION \r\n\
 0. TURN OFF CONSOLE(THIS IS NECESSARY INODER TO BE ABLE TO INTERACT WITH THE REST OF SYSTEM)\r\n\
 1. TOTAL NUMBER OF TOURISTS CATEGORIZED BY AGE GROUP IN THE PARK\r\n\
-2. ALL VEHICLES STILL IN THE PARK\r\n\
+2. TOTAL NUMBER VEHICLES STILL IN THE PARK\r\n\
 3. AMOUNT COLLECTED BY THE PARK AGGREGATED BY FRIDGE NUMBER AND ENTRACE FUND.\r\n\
 4. TOTAL NUMBER OF DRIVERS IN THE PARK\r\n\
 5. NUMBER OF BOTTLES IN THE FRIDGE\r\n\
@@ -210,19 +231,19 @@ void displayDefaultFridgeMessage(){
 		
 		displayMessage(buf, 1);
 }
-
+//SERIAL CONSOLE
 void usart_init(){
 	//set baud rate
 	UBRR1L = (unsigned char) UBRR;
 	UBRR1H = (unsigned char)(UBRR >> 8);
 	//enable rx/tx for USART1 and enable receive interrupt
-	UCSR1B |= (1<<TXEN1) | (1 << RXEN1);
+	UCSR1B |= (1<<TXEN1) | (1 << RXEN1);//transmission
 	//set frame format: 1 stop bit, 8bit data
 
 }
 
 
-
+//Send characters one at a time
 void usart_send(unsigned char i){
 	
 	// Wait for the UDR1 register to be empty.
@@ -232,13 +253,45 @@ void usart_send(unsigned char i){
 }
 
 
-void displayTerminalMsg(char *msg){
+void displayTerminalMsg(char *msg){ //send message
 	int i =0;
 	while(msg[i] != '\0'){
 		usart_send(msg[i]);
 		i++;
 	}
 }
+
+
+
+void displayTerminalInfo(char str[], int info){ //concatenates message with int
+	int numLen = (int)((ceil(log10(info)) + 1) * sizeof(char));
+
+	char infoStr[numLen];
+	sprintf(infoStr, "%d", info);
+
+	int buff_len = strlen(str) + numLen;
+	
+	char buf[buff_len + 1];
+	
+	snprintf(buf, sizeof(buf), "%s%s", str, infoStr); //merge string with int
+	displayTerminalMsg(buf);
+	displayTerminalMsg("\r\n");
+	memset(buf, 0, strlen(buf));
+}
+
+int strToInt(char *str, int strLen){ //string(charater by character) to integer
+	int converted = 0;
+	int i = 0;
+	while (i < strLen)
+	{
+		int j = str[i] - '0'; //convert character to int
+		converted = (converted * 10) + j;
+		i++;
+	}
+	
+	return converted;
+}
+
 
 bool isStringEqual(char *str1, char *str2){
 	int i;
@@ -253,43 +306,14 @@ bool isStringEqual(char *str1, char *str2){
 			}
 		}
 		
-	return true;
+		return true;
 	}
 
 	return false;
 }
 
-void displayTerminalInfo(char str[], int info){
-	int numLen = (int)((ceil(log10(info)) + 1) * sizeof(char));
 
-	char infoStr[numLen];
-	sprintf(infoStr, "%d", info);
-
-	int buff_len = strlen(str) + numLen;
-	
-	char buf[buff_len + 1];
-	
-	snprintf(buf, sizeof(buf), "%s%s", str, infoStr);
-	displayTerminalMsg(buf);
-	displayTerminalMsg("\r\n\r\n");
-	memset(buf, 0, strlen(buf));
-}
-
-int strToInt(char *str, int strLen){
-	int converted = 0;
-	int i = 0;
-	while (i < strLen)
-	{
-		int j = str[i] - '0'; //convert character to int
-		converted = (converted * 10) + j;
-		i++;
-	}
-	
-	return converted;
-}
-
-
-void attendantOperate(){
+void attendantOperate(){ //respomsible for all commands on serial console
 	if (terminalMode == 1)
 	{
 		//login mode
@@ -311,7 +335,10 @@ void attendantOperate(){
 	{
 		//add new number
 		int newBottles = strToInt(termialInput, terminalIndex);
-		totalBottles = newBottles;
+			saveDataToEEPROM(TOTAL_BOTTLES,newBottles);
+			// retrives data from eeprom at specified address.
+			//totalBottles = (int)readDataFromEEPROM(TOTAL_BOTTLES);
+			totalBottles = newBottles;
 		
 		displayTerminalInfo("BOTTLES REPLENISHED SUCCESSFULLY TO = ", totalBottles);
 		terminalMode = 0; //reset
@@ -321,17 +348,23 @@ void attendantOperate(){
 	{
 		//add new number
 		int newCharge = strToInt(termialInput, terminalIndex);
-		chargeTouristsBelow10 = newCharge;
+		// saves charges of pple below 10
+		saveDataToEEPROM(PPLE_BELOW_10,newCharge);
+		// retrives data for pple below 10
+		chargeTouristsBelow10 = (int)readDataFromEEPROM(PPLE_BELOW_10);
 		
 		displayTerminalInfo("CHARGE UPDATED SUCCESSFULLY TO = ", chargeTouristsBelow10);
-		terminalMode = 0; //reset
+		terminalMode = 0; //reset 
 		displayTerminalMsg(terminalMenu);
 	}
 	else if (terminalMode == 4)
 	{
 		//add new number
 		int newCharge = strToInt(termialInput, terminalIndex);
-		chargeTouristsAbove10 = newCharge;
+		// saves charges to eeprom for tourists above 10
+		saveDataToEEPROM(PPLE_ABOVE_10,newCharge);
+		// retrives data from eeprom at specified address.
+		chargeTouristsAbove10 = (int)readDataFromEEPROM(PPLE_ABOVE_10);
 		
 		displayTerminalInfo("CHARGE UPDATED SUCCESSFULLY TO = ", chargeTouristsAbove10);
 		terminalMode = 0; //reset
@@ -413,14 +446,8 @@ void attendantOperate(){
 				}
 				else if (isStringEqual(termialInput, "2"))
 				{
-					//2. ALL VEHICLES STILL IN THE PARK
-					displayTerminalMsg("BELOW ARE THE VEHICLE NUMBER PLATES STILL IN THE PARK \r\n");
-					for (int i = 0; i < currentCapacity; i++)
-					{
-						
-						displayTerminalInfo("VEHICLE - ", touristCars[i].plateNo);
-					}
-					
+					//2. TOTAL VEHICLES STILL IN THE PARK
+					displayTerminalInfo("TOTAL NUMBER OF VEHICLES STILL IN THE PARK = ", currentCapacity);
 					displayTerminalMsg(terminalMenu);
 				}
 				else if (isStringEqual(termialInput, "3"))
@@ -474,6 +501,9 @@ void attendantOperate(){
 					terminalMode = 3;
 				}
 				
+				
+				
+				
 			}
 		}
 		
@@ -482,7 +512,7 @@ void attendantOperate(){
 	}
 }
 
-void usart_receive(){
+void usart_receive(){ //receiving input (receives character by character)
 	while(!(UCSR1A & (1 << RXC1)));
 	unsigned char i = UDR1;
 	if (i == 0x0D)
@@ -500,8 +530,6 @@ void usart_receive(){
 		terminalIndex++;
 	}
 }
-
-
 
 
 int main(void)
@@ -886,6 +914,32 @@ void monitorGateKeyPad(){
 			
 		}
 }
+
+
+
+/*
+int main(void) {
+	// Initialize the EEPROM if needed
+	eeprom_busy_wait();
+
+	// Data to be saved and read
+	uint8_t dataToSave = 42;
+	uint8_t readData;
+
+	// Save data to EEPROM
+	saveDataToEEPROM(dataToSave);
+
+	// Read data from EEPROM
+	readData = readDataFromEEPROM();
+
+	// Your code here to use the read data
+
+	while (1) {
+		// Your main program loop
+	}
+	return 0;
+}
+*/
 
 ISR(INT0_vect){
 	PORTJ = 0xff;
