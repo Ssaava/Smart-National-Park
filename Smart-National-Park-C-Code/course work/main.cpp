@@ -545,7 +545,6 @@ int main(void)
 	
 	displayTerminalMsg("SERAIL CONSOLE IS CURRENTLY OFF, PRESS # ON THE KEYPAD TO ACTIVATE IT \r\n\r\n");
 	
-	saveToEEPROM(7);
 	
     while (1) {
 		//PORTC = 0b00100000;
