@@ -11,6 +11,7 @@
 #define TOTAL_NUM_OF_PPLE 20
 #define PPLE_BELOW_10 64
 #define PPLE_ABOVE_10 30
+#define TOTAL_BOTTLES 60
 
 // Function to save data to EEPROM
 void saveDataToEEPROM(int key,int data) {
@@ -35,14 +36,14 @@ int fridgeMode = 0;
 int currentCapacity = 0;
 int bottleCost = 1500;
 int fridgeNum = 0;
-int totalBottles = 10;
+int totalBottles = (int)readDataFromEEPROM(TOTAL_BOTTLES);
 int collectedFridgeMoney = 0;
 int expectedMoney = 0;
 
 char termialInput[1000];
 char attendantPin[] = "2222";
-int chargeTouristsBelow10 = 2000;
-int chargeTouristsAbove10 = 5000;
+int chargeTouristsBelow10 = (int)readDataFromEEPROM(PPLE_BELOW_10);
+int chargeTouristsAbove10 = (int)readDataFromEEPROM(PPLE_ABOVE_10);
 int terminalIndex = 0;
 bool isAttendantLoggedIn = false;
 int terminalMode = 0;
@@ -303,7 +304,10 @@ void attendantOperate(){ //respomsible for all commands on serial console
 	{
 		//add new number
 		int newBottles = strToInt(termialInput, terminalIndex);
-		totalBottles = newBottles;
+			saveDataToEEPROM(TOTAL_BOTTLES,newBottles);
+			// retrives data from eeprom at specified address.
+			//totalBottles = (int)readDataFromEEPROM(TOTAL_BOTTLES);
+			totalBottles = newBottles;
 		
 		displayTerminalInfo("BOTTLES REPLENISHED SUCCESSFULLY TO = ", totalBottles);
 		terminalMode = 0; //reset
